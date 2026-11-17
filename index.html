@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#00635b">
+<title>Kinerja Pegawai BSI Rungkut 1</title>
+<style>
+:root{
+  --bg:#f3f7f6; --surface:#ffffff; --fg:#0f2a29; --muted:#56706e; --line:#d7e3e1;
+  --accent:#00796f; --accent-fg:#ffffff; --accent-soft:#e0f1ee;
+  --band:#00635b; --band-fg:#ffffff; --gold:#a86a00; --danger:#b3261e;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0c1818; --surface:#132323; --fg:#e4f0ee; --muted:#93adab; --line:#244140;
+    --accent:#3cc9bd; --accent-fg:#052321; --accent-soft:#16393a;
+    --band:#0e3836; --band-fg:#f1fbfa; --gold:#e3ab4d; --danger:#ff8f84;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh}
+h1,h2{margin:0;text-wrap:balance}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+
+.wrap{max-width:960px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band{background:var(--band);color:var(--band-fg);padding-top:env(safe-area-inset-top,0px)}
+.band .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding-block:18px 16px}
+.eyebrow{margin:0 0 2px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.band h1{font-size:22px;line-height:1.15}
+.band .sub{margin:4px 0 0;opacity:.85;font-size:13px}
+.band .side{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;opacity:.9}
+.linkbtn{appearance:none;background:none;border:0;color:inherit;text-decoration:underline;cursor:pointer;padding:6px 0;min-height:32px}
+
+.tabs{background:var(--surface);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;padding:13px 14px 10px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;min-height:44px}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+
+main.wrap{padding-block:18px calc(40px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.banner{padding:10px 14px;border-radius:8px;background:var(--accent-soft);border:1px solid var(--line);font-size:13px}
+.banner.warn{border-color:var(--danger)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.panel h2{font-size:17px}
+.hint{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+form{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+label{font-size:12px;font-weight:600;color:var(--muted)}
+input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-width:0}
+fieldset.grp{border:1px solid var(--line);border-radius:8px;padding:12px;margin:0;min-width:0}
+fieldset.grp legend{padding:0 6px;font-size:13px;font-weight:700;color:var(--accent)}
+.btn{appearance:none;border:0;border-radius:8px;min-height:46px;padding:10px 16px;font-weight:700;cursor:pointer;background:var(--accent);color:var(--accent-fg)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.ghost{background:var(--accent-soft);color:var(--accent)}
+.btn.small{min-height:38px;padding:6px 12px;font-size:13px}
+
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;align-items:end}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.kpi.main{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.kpi .k{margin:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.kpi .v{margin:2px 0 0;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi .s{margin:0;font-size:12px;opacity:.75}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.bars{display:flex;gap:4px;height:170px;margin-top:12px}
+.bar{flex:1;min-width:0;display:flex;flex-direction:column}
+.plot{flex:1;display:flex;align-items:flex-end;border-bottom:1px solid var(--line)}
+.fill{width:100%;min-height:2px;background:var(--accent);border-radius:3px 3px 0 0}
+.lbl{margin-top:3px;font-size:10px;text-align:center;color:var(--muted);white-space:nowrap;overflow:hidden}
+.note{margin:10px 0 0;font-size:12px;color:var(--muted)}
+.rows{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+.row{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;gap:8px;align-items:center;font-size:13px}
+.row .track{height:8px;border-radius:4px;background:var(--accent-soft);overflow:hidden}
+.row .track i{display:block;height:100%;background:var(--gold);border-radius:4px}
+.row b{font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.scroll{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+tr:last-child td{border-bottom:0}
+.rank{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:700;margin-right:8px}
+.rank.first{background:var(--gold);color:#fff}
+.empty{padding:22px 12px;text-align:center;color:var(--muted)}
+.head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.gate{max-width:420px;margin:24px auto 0}
+.gate form{margin-top:12px}
+.err{color:var(--danger);font-size:13px;margin:0}
+#toast{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:0 16px calc(16px + env(safe-area-inset-bottom,0px));pointer-events:none;z-index:20}
+#toast span{background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+#toast span.bad{background:var(--danger);color:#fff}
+</style>
+</head>
+<body>
+
+<div class="band">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Bank Syariah Indonesia</p>
+      <h1>KCP Surabaya Rungkut 1</h1>
+      <p class="sub">Capaian closing harian pegawai</p>
+    </div>
+    <div class="side">
+      <span id="today"></span>
+      <span id="updated"></span>
+      <button class="linkbtn" id="logoutBtn" type="button" hidden>Ganti kode akses</button>
+    </div>
+  </div>
+</div>
+
+<!-- Layar kode akses -->
+<div class="wrap" id="gateWrap" hidden>
+  <div class="panel gate">
+    <h2>Masuk</h2>
+    <p class="hint">Masukkan kode akses kantor. Tanyakan ke admin jika belum tahu.</p>
+    <form id="gateForm" autocomplete="off">
+      <div class="fld"><label for="kode">Kode akses</label><input id="kode" type="password" autocomplete="off" required></div>
+      <p class="err" id="gateErr" hidden></p>
+      <button class="btn" id="gateBtn" type="submit">Masuk</button>
+    </form>
+  </div>
+</div>
+
+<div id="app" hidden>
+<nav class="tabs" aria-label="Menu">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" data-tab="input" aria-selected="true">Input harian</button>
+    <button class="tab" role="tab" data-tab="rekap" aria-selected="false">Rekap</button>
+    <button class="tab" role="tab" data-tab="riwayat" aria-selected="false">Riwayat</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="banner" id="banner" hidden></div>
+
+  <section id="tab-input">
+    <div class="panel">
+      <h2>Input capaian hari ini</h2>
+      <p class="hint" id="inputHint">Isi hanya produk yang closing. Kolom kosong dianggap 0.</p>
+      <form id="form" autocomplete="off">
+        <div class="grid">
+          <div class="fld"><label for="tanggal">Tanggal</label><input id="tanggal" type="date" required></div>
+          <div class="fld"><label for="pegawai">Nama pegawai</label><select id="pegawai" required></select></div>
+        </div>
+        <div id="fields"></div>
+        <div class="fld"><label for="catatan">Catatan (opsional)</label><input id="catatan" type="text" maxlength="200" placeholder="Contoh: nasabah dari bazaar"></div>
+        <button class="btn" id="submitBtn" type="submit">Simpan capaian</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="filters" id="filters" hidden>
+    <div class="fld"><label for="fBulan">Bulan</label><select id="fBulan"></select></div>
+    <div class="fld"><label for="fTahun">Tahun</label><select id="fTahun"></select></div>
+    <div class="fld"><label for="fPegawai">Pegawai</label><select id="fPegawai"></select></div>
+    <button class="btn ghost small" id="refreshBtn" type="button">Muat ulang data</button>
+  </div>
+
+  <section id="tab-rekap" hidden>
+    <div class="kpis" id="kpis"></div>
+    <div class="two" style="margin-top:16px">
+      <div class="panel"><h2 id="trendTitle">Dana masuk per hari</h2><div id="trend"></div></div>
+      <div class="panel"><h2>Jumlah closing per produk</h2><div class="rows" id="produk"></div></div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <h2>Peringkat pegawai</h2>
+      <p class="hint">Diurutkan menurut dana masuk tabungan pada periode terpilih.</p>
+      <div class="scroll"><table>
+        <thead><tr><th>Pegawai</th><th>Dana masuk</th><th>Tabungan (NOA)</th><th>Cicil emas (gr)</th><th>E-mas (NOA)</th><th>Top up (gr)</th><th>Deposito (Rp)</th><th>QRIS</th></tr></thead>
+        <tbody id="lbody"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section id="tab-riwayat" hidden>
+    <div class="panel">
+      <div class="head-row">
+        <div><h2>Riwayat input</h2><p class="hint" id="riwayatCount"></p></div>
+        <button class="btn ghost small" id="exportBtn" type="button">Unduh CSV</button>
+      </div>
+      <div class="scroll"><table>
+        <thead><tr><th>Tanggal</th><th class="l">Pegawai</th><th>Dana masuk</th><th>Haji</th><th>Wadiah</th><th>Mudh.</th><th>Bisnis</th><th>Cicil emas</th><th>E-mas</th><th>Top up</th><th>Deposito</th><th>QRIS</th><th class="l">Catatan</th></tr></thead>
+        <tbody id="rbody"></tbody>
+      </table></div>
+      <p class="note">Untuk mengoreksi atau menghapus input yang salah, minta admin mengubahnya langsung di Google Sheets.</p>
+    </div>
+  </section>
+</main>
+</div>
+
+<div id="toast" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   PENGATURAN: tempel URL Aplikasi Web dari Google Apps Script
+   di antara tanda kutip. Contoh bentuknya:
+   https://script.google.com/macros/s/AKfycb.../exec
+   ============================================================ */
+var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxbuGqlr_ffJElMo-S_6vyib31MoD6LR4nRVfAcUp4f5gqxIvkFq78jbh7jBx2drUNhhQ/exec';
+
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  var GROUPS = [
+    {t:'Dana masuk tabungan', f:[{k:'danaMasuk', l:'Nominal dana masuk (Rp)', step:1}]},
+    {t:'Tabungan baru (jumlah rekening)', f:[
+      {k:'tabHaji', l:'Tab. Haji', step:1},{k:'tabWadiah', l:'Tab. Wadiah', step:1},
+      {k:'tabMudharabah', l:'Tab. Mudharabah', step:1},{k:'tabBisnis', l:'Tab. Bisnis', step:1}]},
+    {t:'Emas', f:[
+      {k:'cicilEmasNoa', l:'Cicil emas (NOA)', step:1},{k:'cicilEmasGram', l:'Cicil emas (gram)', step:0.01},
+      {k:'emasNoa', l:'E-mas NOA baru', step:1},{k:'emasTopupGram', l:'Top up e-mas (gram)', step:0.01}]},
+    {t:'Deposito', f:[{k:'depositoNoa', l:'Deposito (NOA)', step:1},{k:'depositoRp', l:'Deposito (Rp)', step:1}]},
+    {t:'QRIS', f:[{k:'qris', l:'Merchant QRIS baru', step:1}]}
+  ];
+  var NUMK = []; GROUPS.forEach(function(g){ g.f.forEach(function(f){ NUMK.push(f); }); });
+
+  var now = new Date();
+  var kode = '', pegawai = [], logs = [], loaded = false, pendingId = null, loading = false;
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function num(v){ v = Number(v); return isFinite(v) ? v : 0; }
+  function fmtRp(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+  function fmtGr(n){ return (Math.round(n * 100) / 100).toLocaleString('id-ID') + ' gr'; }
+  function fmtInt(n){ return Math.round(n).toLocaleString('id-ID'); }
+  function tabNoa(e){ return num(e.tabHaji) + num(e.tabWadiah) + num(e.tabMudharabah) + num(e.tabBisnis); }
+  function ymd(t){ t = String(t || ''); return {y:+t.slice(0,4), m:+t.slice(5,7) - 1, d:+t.slice(8,10)}; }
+  function fmtTgl(t){ var p = ymd(t); return p.d + ' ' + BULAN[p.m].slice(0,3) + ' ' + p.y; }
+  function localToday(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function store(k, v){ try{ if(v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); }catch(e){} }
+  function recall(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } }
+
+  var toastTimer = null;
+  function toast(msg, bad){
+    var el = $('toast'); el.innerHTML = '<span class="' + (bad ? 'bad' : '') + '">' + esc(msg) + '</span>';
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.innerHTML = ''; }, 4000);
+  }
+  function banner(msg, warn){
+    var b = $('banner'); if(!msg){ b.hidden = true; return; }
+    b.textContent = msg; b.className = 'banner' + (warn ? ' warn' : ''); b.hidden = false;
+  }
+
+  /* ---------- UI statis ---------- */
+  $('today').textContent = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  $('tanggal').value = localToday();
+  $('fields').innerHTML = GROUPS.map(function(g){
+    return '<fieldset class="grp"><legend>' + g.t + '</legend><div class="grid">' + g.f.map(function(f){
+      return '<div class="fld"><label for="f_' + f.k + '">' + f.l + '</label><input id="f_' + f.k + '" type="number" inputmode="' + (f.step < 1 ? 'decimal' : 'numeric') + '" min="0" step="' + f.step + '" placeholder="0"></div>';
+    }).join('') + '</div></fieldset>';
+  }).join('');
+  $('fBulan').innerHTML = '<option value="ALL">Semua bulan</option>' + BULAN.map(function(b, i){ return '<option value="' + i + '">' + b + '</option>'; }).join('');
+  $('fBulan').value = String(now.getMonth());
+
+  function showTab(name){
+    if(['input','rekap','riwayat'].indexOf(name) < 0) name = 'input';
+    ['input','rekap','riwayat'].forEach(function(t){ $('tab-' + t).hidden = (t !== name); });
+    document.querySelectorAll('.tab').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'); });
+    $('filters').hidden = (name === 'input');
+  }
+  document.querySelectorAll('.tab').forEach(function(b){
+    b.addEventListener('click', function(){ location.hash = b.dataset.tab; showTab(b.dataset.tab); });
+  });
+  window.addEventListener('hashchange', function(){ showTab(location.hash.replace('#','')); });
+  showTab(location.hash.replace('#',''));
+
+  /* ---------- pilihan (select) ---------- */
+  function setOptions(sel, items){
+    var cur = sel.value;
+    sel.innerHTML = items.map(function(o){ return '<option value="' + esc(o.v) + '">' + esc(o.t) + '</option>'; }).join('');
+    if(cur && items.some(function(o){ return o.v === cur; })) sel.value = cur;
+  }
+  function allNames(){
+    var set = {}; pegawai.forEach(function(n){ set[n] = 1; }); logs.forEach(function(l){ if(l.pegawai) set[l.pegawai] = 1; });
+    return Object.keys(set).sort(function(a,b){ return a.localeCompare(b, 'id'); });
+  }
+  function renderSelects(){
+    var sel = $('pegawai'), cur = sel.value;
+    if(!pegawai.length){
+      sel.innerHTML = '<option value="">Daftar pegawai kosong</option>';
+      $('inputHint').textContent = 'Daftar pegawai belum diisi. Minta admin mengisi sheet "Pegawai" di Google Sheets.';
+    } else {
+      setOptions(sel, pegawai.map(function(n){ return {v:n, t:n}; }));
+      if(!cur){ var last = recall('kinerja_last_pegawai'); if(last && pegawai.indexOf(last) >= 0) sel.value = last; }
+      $('inputHint').textContent = 'Isi hanya produk yang closing. Kolom kosong dianggap 0.';
+    }
+    var years = {}; years[now.getFullYear()] = 1;
+    logs.forEach(function(l){ var y = ymd(l.tanggal).y; if(y) years[y] = 1; });
+    var fy = $('fTahun'), had = fy.value;
+    setOptions(fy, Object.keys(years).sort().reverse().map(function(y){ return {v:y, t:y}; }));
+    if(!had) fy.value = String(now.getFullYear());
+    setOptions($('fPegawai'), [{v:'ALL', t:'Semua pegawai'}].concat(allNames().map(function(n){ return {v:n, t:n}; })));
+  }
+
+  function filtered(){
+    var m = $('fBulan').value, y = $('fTahun').value, p = $('fPegawai').value;
+    return logs.filter(function(l){
+      var d = ymd(l.tanggal);
+      return (m === 'ALL' || String(d.m) === m) && String(d.y) === y && (p === 'ALL' || l.pegawai === p);
+    });
+  }
+  function periodLabel(){ var m = $('fBulan').value; return (m === 'ALL' ? 'Sepanjang ' : BULAN[+m] + ' ') + $('fTahun').value; }
+  function sum(data, fn){ return data.reduce(function(s, e){ return s + fn(e); }, 0); }
+
+  /* ---------- rekap ---------- */
+  function renderRekap(){
+    var data = filtered();
+    var dana = sum(data, function(e){ return num(e.danaMasuk); });
+    var noa = sum(data, tabNoa);
+    var gr = sum(data, function(e){ return num(e.cicilEmasGram) + num(e.emasTopupGram); });
+    var emas = sum(data, function(e){ return num(e.emasNoa); });
+    var depRp = sum(data, function(e){ return num(e.depositoRp); });
+    var depNoa = sum(data, function(e){ return num(e.depositoNoa); });
+    var qris = sum(data, function(e){ return num(e.qris); });
+    $('kpis').innerHTML =
+      '<div class="kpi main"><p class="k">Dana masuk tabungan</p><p class="v">' + fmtRp(dana) + '</p><p class="s">' + esc(periodLabel()) + '</p></div>' +
+      '<div class="kpi"><p class="k">Tabungan baru</p><p class="v">' + fmtInt(noa) + ' NOA</p><p class="s">Haji, Wadiah, Mudharabah, Bisnis</p></div>' +
+      '<div class="kpi"><p class="k">Emas</p><p class="v">' + fmtGr(gr) + '</p><p class="s">Cicil emas + top up e-mas</p></div>' +
+      '<div class="kpi"><p class="k">E-mas baru</p><p class="v">' + fmtInt(emas) + ' NOA</p><p class="s">&nbsp;</p></div>' +
+      '<div class="kpi"><p class="k">Deposito</p><p class="v">' + fmtRp(depRp) + '</p><p class="s">' + fmtInt(depNoa) + ' NOA</p></div>' +
+      '<div class="kpi"><p class="k">QRIS</p><p class="v">' + fmtInt(qris) + ' merchant</p><p class="s">Merchant baru</p></div>';
+
+    var monthly = $('fBulan').value === 'ALL';
+    $('trendTitle').textContent = monthly ? 'Dana masuk per bulan' : 'Dana masuk per hari';
+    var groups = {};
+    data.forEach(function(e){ var d = ymd(e.tanggal); var key = monthly ? d.m : d.d; groups[key] = (groups[key] || 0) + num(e.danaMasuk); });
+    var keys = Object.keys(groups).map(Number).sort(function(a,b){ return a - b; });
+    if(!keys.length){
+      $('trend').innerHTML = '<p class="empty">' + (loaded ? 'Belum ada capaian pada periode ini.' : 'Memuat data…') + '</p>';
+    } else {
+      var max = Math.max.apply(null, keys.map(function(k){ return groups[k]; })) || 1;
+      var top = keys.reduce(function(a, k){ return groups[k] > groups[a] ? k : a; }, keys[0]);
+      $('trend').innerHTML = '<div class="bars" role="img" aria-label="Grafik dana masuk">' + keys.map(function(k){
+        var lab = monthly ? BULAN[k].slice(0,3) : k;
+        return '<div class="bar" title="' + esc(lab + ': ' + fmtRp(groups[k])) + '"><div class="plot"><div class="fill" style="height:' + Math.max(1, groups[k] / max * 100) + '%"></div></div><div class="lbl">' + esc(lab) + '</div></div>';
+      }).join('') + '</div><p class="note">Tertinggi: ' + fmtRp(groups[top]) + ' (' + esc(monthly ? BULAN[top] : 'tanggal ' + top) + ')</p>';
+    }
+
+    var prod = [
+      ['Tab. Haji', sum(data, function(e){ return num(e.tabHaji); })],
+      ['Tab. Wadiah', sum(data, function(e){ return num(e.tabWadiah); })],
+      ['Tab. Mudharabah', sum(data, function(e){ return num(e.tabMudharabah); })],
+      ['Tab. Bisnis', sum(data, function(e){ return num(e.tabBisnis); })],
+      ['Cicil emas', sum(data, function(e){ return num(e.cicilEmasNoa); })],
+      ['E-mas', emas], ['Deposito', depNoa], ['QRIS', qris]
+    ];
+    var pmax = Math.max.apply(null, prod.map(function(p){ return p[1]; })) || 1;
+    $('produk').innerHTML = prod.map(function(p){
+      return '<div class="row"><span>' + p[0] + '</span><span class="track"><i style="width:' + (p[1] / pmax * 100) + '%"></i></span><b>' + fmtInt(p[1]) + '</b></div>';
+    }).join('');
+
+    var sel = $('fPegawai').value, agg = {};
+    (sel === 'ALL' ? allNames() : [sel]).forEach(function(n){ agg[n] = {dana:0, noa:0, cicil:0, emas:0, topup:0, dep:0, qris:0}; });
+    data.forEach(function(e){
+      var a = agg[e.pegawai] || (agg[e.pegawai] = {dana:0, noa:0, cicil:0, emas:0, topup:0, dep:0, qris:0});
+      a.dana += num(e.danaMasuk); a.noa += tabNoa(e); a.cicil += num(e.cicilEmasGram);
+      a.emas += num(e.emasNoa); a.topup += num(e.emasTopupGram); a.dep += num(e.depositoRp); a.qris += num(e.qris);
+    });
+    var list = Object.keys(agg).map(function(n){ var a = agg[n]; a.nama = n; return a; })
+      .sort(function(a, b){ return b.dana - a.dana || a.nama.localeCompare(b.nama, 'id'); });
+    $('lbody').innerHTML = !list.length
+      ? '<tr><td colspan="8" class="empty">Belum ada pegawai atau capaian.</td></tr>'
+      : list.map(function(a, i){
+        return '<tr><td><span class="rank' + (i === 0 && a.dana > 0 ? ' first' : '') + '">' + (i + 1) + '</span>' + esc(a.nama) + '</td><td><b>' + fmtRp(a.dana) + '</b></td><td>' + fmtInt(a.noa) + '</td><td>' + fmtGr(a.cicil) + '</td><td>' + fmtInt(a.emas) + '</td><td>' + fmtGr(a.topup) + '</td><td>' + fmtRp(a.dep) + '</td><td>' + fmtInt(a.qris) + '</td></tr>';
+      }).join('');
+  }
+
+  function sorted(data){
+    return data.slice().sort(function(a, b){ return String(b.tanggal).localeCompare(String(a.tanggal)) || num(b.waktu) - num(a.waktu); });
+  }
+  function renderRiwayat(){
+    var data = sorted(filtered());
+    $('riwayatCount').textContent = !loaded ? 'Memuat data…' : data.length + ' input · ' + periodLabel();
+    if(!data.length){ $('rbody').innerHTML = '<tr><td colspan="13" class="empty">' + (loaded ? 'Belum ada input pada periode ini.' : 'Memuat data…') + '</td></tr>'; return; }
+    $('rbody').innerHTML = data.map(function(e){
+      return '<tr><td>' + esc(fmtTgl(e.tanggal)) + '</td><td class="l">' + esc(e.pegawai) + '</td><td>' + fmtRp(num(e.danaMasuk)) + '</td><td>' + fmtInt(num(e.tabHaji)) + '</td><td>' + fmtInt(num(e.tabWadiah)) + '</td><td>' + fmtInt(num(e.tabMudharabah)) + '</td><td>' + fmtInt(num(e.tabBisnis)) +
+        '</td><td>' + fmtInt(num(e.cicilEmasNoa)) + ' / ' + fmtGr(num(e.cicilEmasGram)) + '</td><td>' + fmtInt(num(e.emasNoa)) + '</td><td>' + fmtGr(num(e.emasTopupGram)) +
+        '</td><td>' + fmtInt(num(e.depositoNoa)) + ' / ' + fmtRp(num(e.depositoRp)) + '</td><td>' + fmtInt(num(e.qris)) + '</td><td class="l">' + esc(e.catatan) + '</td></tr>';
+    }).join('');
+  }
+  function renderAll(){ renderSelects(); renderRekap(); renderRiwayat(); }
+  ['fBulan','fTahun','fPegawai'].forEach(function(id){ $(id).addEventListener('change', function(){ renderRekap(); renderRiwayat(); }); });
+  $('pegawai').addEventListener('change', function(){ store('kinerja_last_pegawai', $('pegawai').value); });
+
+  /* ---------- komunikasi dengan Google Sheets ---------- */
+  function configured(){ return /^https:\/\/script\.google\.com\//.test(URL_SCRIPT); }
+
+  function showGate(msg){
+    kode = ''; store('kinerja_kode', null);
+    $('app').hidden = true; $('gateWrap').hidden = false; $('logoutBtn').hidden = true; $('updated').textContent = '';
+    $('gateErr').hidden = !msg; $('gateErr').textContent = msg || '';
+    $('kode').value = '';
+  }
+  function showApp(){
+    $('gateWrap').hidden = true; $('app').hidden = false; $('logoutBtn').hidden = false;
+  }
+
+  async function load(silent){
+    if(loading) return true;
+    loading = true;
+    try{
+      var res = await fetch(URL_SCRIPT + '?kode=' + encodeURIComponent(kode) + '&t=' + Date.now());
+      var j = await res.json();
+      if(!j.ok){
+        if(j.error === 'kode'){ showGate('Kode akses salah.'); return false; }
+        throw new Error(j.error || 'gagal');
+      }
+      pegawai = (j.pegawai || []).map(String);
+      logs = Array.isArray(j.data) ? j.data : [];
+      loaded = true;
+      banner('');
+      var d = new Date();
+      $('updated').textContent = 'Diperbarui ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+      renderAll();
+      return true;
+    }catch(e){
+      if(!silent) banner('Data belum bisa dimuat. Periksa sinyal internet, lalu tekan "Muat ulang data".', true);
+      return true;
+    }finally{ loading = false; }
+  }
+
+  $('gateForm').addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    if(!configured()){ $('gateErr').hidden = false; $('gateErr').textContent = 'Dashboard belum disambungkan ke Google Sheets (URL_SCRIPT di index.html belum diisi).'; return; }
+    kode = $('kode').value.trim();
+    if(!kode) return;
+    var btn = $('gateBtn'); btn.disabled = true; btn.textContent = 'Memeriksa…';
+    try{
+      var res = await fetch(URL_SCRIPT + '?kode=' + encodeURIComponent(kode) + '&t=' + Date.now());
+      var j = await res.json();
+      if(!j.ok){ showGate(j.error === 'kode' ? 'Kode akses salah.' : 'Gagal masuk. Coba lagi.'); return; }
+      store('kinerja_kode', kode);
+      showApp();
+      pegawai = (j.pegawai || []).map(String); logs = Array.isArray(j.data) ? j.data : []; loaded = true;
+      var d = new Date(); $('updated').textContent = 'Diperbarui ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+      renderAll();
+    }catch(e){
+      $('gateErr').hidden = false; $('gateErr').textContent = 'Tidak bisa terhubung. Periksa sinyal internet dan coba lagi.';
+    }finally{ btn.disabled = false; btn.textContent = 'Masuk'; }
+  });
+  $('logoutBtn').addEventListener('click', function(){ showGate(''); });
+  $('refreshBtn').addEventListener('click', async function(){ await load(false); if(loaded) toast('Data diperbarui.'); });
+
+  $('form').addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var tanggal = $('tanggal').value, nama = $('pegawai').value;
+    if(!tanggal || !nama){ toast('Pilih tanggal dan nama pegawai.', true); return; }
+    var entry = {aksi:'tambah', kode:kode, tanggal:tanggal, pegawai:nama, catatan:$('catatan').value.trim().slice(0, 200)};
+    var any = false;
+    NUMK.forEach(function(f){
+      var raw = parseFloat($('f_' + f.k).value);
+      var v = isFinite(raw) && raw > 0 ? (f.step < 1 ? Math.round(raw * 100) / 100 : Math.round(raw)) : 0;
+      entry[f.k] = v; if(v > 0) any = true;
+    });
+    if(!any){ toast('Isi minimal satu capaian.', true); return; }
+    if(!pendingId) pendingId = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    entry.id = pendingId;
+    var btn = $('submitBtn'); btn.disabled = true; btn.textContent = 'Menyimpan…';
+    try{
+      var res = await fetch(URL_SCRIPT, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(entry)});
+      var j = await res.json();
+      if(!j.ok){
+        if(j.error === 'kode'){ showGate('Kode akses sudah berubah. Masukkan kode yang baru.'); return; }
+        if(j.error === 'pegawai'){ toast('Nama pegawai tidak ada di daftar. Muat ulang data.', true); return; }
+        toast('Gagal menyimpan. Coba lagi.', true); return;
+      }
+      pendingId = null;
+      NUMK.forEach(function(f){ $('f_' + f.k).value = ''; });
+      $('catatan').value = '';
+      toast('Capaian ' + nama + ' tersimpan.');
+      load(true);
+    }catch(e){
+      toast('Belum tersimpan, sinyal bermasalah. Tekan Simpan lagi (tidak akan tercatat dobel).', true);
+    }finally{ btn.disabled = false; btn.textContent = 'Simpan capaian'; }
+  });
+
+  /* ---------- unduh CSV ---------- */
+  function csvText(v){ var s = String(v == null ? '' : v); if(/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; }
+  $('exportBtn').addEventListener('click', function(){
+    var data = filtered().slice().sort(function(a, b){ return String(a.tanggal).localeCompare(String(b.tanggal)); });
+    if(!data.length){ toast('Tidak ada data untuk diunduh.', true); return; }
+    var head = ['Tanggal','Pegawai','Dana Masuk (Rp)','Tab Haji','Tab Wadiah','Tab Mudharabah','Tab Bisnis','Cicil Emas (NOA)','Cicil Emas (gram)','E-mas NOA','Top Up E-mas (gram)','Deposito (NOA)','Deposito (Rp)','QRIS','Catatan'];
+    var lines = [head.map(csvText).join(',')];
+    data.forEach(function(e){
+      lines.push([csvText(e.tanggal), csvText(e.pegawai), num(e.danaMasuk), num(e.tabHaji), num(e.tabWadiah), num(e.tabMudharabah), num(e.tabBisnis), num(e.cicilEmasNoa), num(e.cicilEmasGram), num(e.emasNoa), num(e.emasTopupGram), num(e.depositoNoa), num(e.depositoRp), num(e.qris), csvText(e.catatan)].join(','));
+    });
+    var m = $('fBulan').value, y = $('fTahun').value;
+    var blob = new Blob(['﻿' + lines.join('\n')], {type:'text/csv;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'rekap-kinerja-' + y + (m === 'ALL' ? '' : '-' + String(+m + 1).padStart(2, '0')) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  });
+
+  /* ---------- mulai ---------- */
+  renderAll();
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible' && kode && !$('app').hidden) load(true); });
+  setInterval(function(){ if(document.visibilityState === 'visible' && kode && !$('app').hidden) load(true); }, 60000);
+
+  if(!configured()){
+    $('gateWrap').hidden = false;
+    $('gateErr').hidden = false;
+    $('gateErr').textContent = 'Dashboard belum disambungkan ke Google Sheets. Admin perlu mengisi URL_SCRIPT di index.html (lihat PANDUAN.md).';
+  } else {
+    var saved = recall('kinerja_kode');
+    if(saved){ kode = saved; showApp(); load(false); }
+    else { $('gateWrap').hidden = false; }
+  }
+})();
+</script>
+</body>
+</html>
